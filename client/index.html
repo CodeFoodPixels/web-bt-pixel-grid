@@ -10,10 +10,17 @@
     <body>
         <button id="connect">Connect</button>
         <div id="controls">
-            <div>
-                <label>Color: <input type="color" value="#ffffff" id="color" /></label>
+            <div id="tools">
+                <button class="btn-color red" data-color="#ff0000">red</button>
+                <button class="btn-color green" data-color="#00ff00">green</button>
+                <button class="btn-color blue" data-color="#0000ff">blue</button>
+                <button class="btn-color white" data-color="#ffffff">white</button>
+                <button class="btn-color black" data-color="#000000">black</button>
+                <button class="btn-color yellow" data-color="#ffff00">yellow</button>
+                <button class="btn-color cyan" data-color="#00ffff">cyan</button>
+                <button class="btn-color magenta" data-color="#ff00ff">magenta</button>
+                <input type="color" value="#ffffff" id="color" />
             </div>
-            <div id="canvasContainer"></div>
         </div>
         <script src="script.js" defer></script>
     </body>

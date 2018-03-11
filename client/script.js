@@ -1,7 +1,6 @@
 const serviceUuid = '9d407ea0-1f04-11e8-882c-e798277bf91c';
 const colorCharacteristicUuid = 'fadaf690-1f0d-11e8-a594-e1d1160981b7';
 const dimensionsCharacteristicUuid = '7d973ea0-1f0d-11e8-a96e-ed9798f4df2c';
-const colorPicker = document.querySelector('#color');
 
 let color = '#ffffff';
 
@@ -29,13 +28,13 @@ async function connect() {
 
     setupCanvas(dimensions, colorCharacteristic);
 
-    document.querySelector('#connect').style.display = 'none';
-    document.querySelector('#controls').style.display = 'block';
+    document.querySelector('#connect').classList.add('connected');
+    document.querySelector('#controls').classList.add('connected');
 }
 
 function setupCanvas(dimensions, colorCharacteristic) {
-    const widthPixel = Math.floor((window.innerWidth / dimensions.width) * 0.8);
-    const heightPixel = Math.floor((window.innerHeight / dimensions.height) * 0.8);
+    const widthPixel = Math.floor((window.innerWidth / dimensions.width));
+    const heightPixel = Math.floor((window.innerHeight / dimensions.height));
 
     const pixelSize = widthPixel < heightPixel ? widthPixel : heightPixel;
 
@@ -43,7 +42,7 @@ function setupCanvas(dimensions, colorCharacteristic) {
     canvas.setAttribute('width', pixelSize * dimensions.width);
     canvas.setAttribute('height', pixelSize * dimensions.height);
 
-    document.querySelector('#canvasContainer').appendChild(canvas);
+    document.querySelector('#controls').appendChild(canvas);
 
     let color = '#ffffff';
     const ctx = canvas.getContext('2d');
@@ -64,7 +63,7 @@ function drawPixel(canvas, pixelSize, colorCharacteristic, x, y, color) {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, pixelSize, pixelSize);
 
-    const command = x / pixelSize + ',' + y / pixelSize + ',' + colorPicker.value.replace('#', '');
+    const command = x / pixelSize + ',' + y / pixelSize + ',' + document.querySelector('#color').value.replace('#', '');
 
     colorCharacteristic.writeValue(encoder.encode(command))
         .catch(error => {
@@ -136,13 +135,23 @@ function moveDraw(canvas, pixelSize, colorCharacteristic, ev) {
     }
 }
 
+function updateColor() {
+    color = document.querySelector('#color').value;
+}
+
+function setColorValue() {
+    document.querySelector('#color').value = this.getAttribute('data-color');
+    updateColor();
+}
 
 if (!navigator.bluetooth) {
     alert('You must use a Web Bluetooth enabled browser');
 } else {
     document.querySelector('#connect').addEventListener('click', connect);
 
-    colorPicker.addEventListener('change', () => {
-        color = colorPicker.value;
+    document.querySelector('#color').addEventListener('change', updateColor);
+
+    document.querySelectorAll('.btn-color').forEach((el) => {
+        el.addEventListener('click', setColorValue);
     });
 }
