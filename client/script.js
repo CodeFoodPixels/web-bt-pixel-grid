@@ -34,8 +34,8 @@ async function connect() {
 }
 
 function setupCanvas(dimensions, colorCharacteristic) {
-    const widthPixel = Math.floor(window.innerWidth / dimensions.width);
-    const heightPixel = Math.floor(window.innerHeight / dimensions.height);
+    const widthPixel = Math.floor((window.innerWidth / dimensions.width) * 0.8);
+    const heightPixel = Math.floor((window.innerHeight / dimensions.height) * 0.8);
 
     const pixelSize = widthPixel < heightPixel ? widthPixel : heightPixel;
 
@@ -50,21 +50,23 @@ function setupCanvas(dimensions, colorCharacteristic) {
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, pixelSize * dimensions.width, pixelSize * dimensions.height);
 
+    canvas.addEventListener('touchstart', onCanvasMouseDown.bind(null, canvas, pixelSize, colorCharacteristic));
     canvas.addEventListener('mousedown', onCanvasMouseDown.bind(null, canvas, pixelSize, colorCharacteristic));
 }
 
-function drawPixel(pixelSize, colorCharacteristic, x, y, color) {
+function drawPixel(canvas, pixelSize, colorCharacteristic, x, y, color) {
     const encoder = new TextEncoder('utf-8');
 
     x = (Math.ceil(x / pixelSize) * pixelSize) - pixelSize;
     y = (Math.ceil(y / pixelSize) * pixelSize) - pixelSize;
 
+    const ctx = canvas.getContext('2d');
     ctx.fillStyle = color;
     ctx.fillRect(x, y, pixelSize, pixelSize);
 
     const command = x / pixelSize + ',' + y / pixelSize + ',' + colorPicker.value.replace('#', '');
 
-    colourCharacteristic.writeValue(encoder.encode(command))
+    colorCharacteristic.writeValue(encoder.encode(command))
         .catch(error => {
             console.log(error);
         });
@@ -98,18 +100,18 @@ function onCanvasMouseDown(canvas, pixelSize, colorCharacteristic, ev) {
 
     const position = getCanvasCoords(canvas, ev.pageX, ev.pageY);
 
-    drawPixel(pixelSize, colorCharacteristic, position.x, position.y, color);
+    drawPixel(canvas, pixelSize, colorCharacteristic, position.x, position.y, color);
 
     const boundMoveDraw = moveDraw.bind(null, canvas, pixelSize, colorCharacteristic);
     const boundTouchMove = onCanvasTouchMove.bind(null, canvas, pixelSize, colorCharacteristic);
 
     canvas.addEventListener('mousemove', boundMoveDraw);
     canvas.addEventListener('touchmove', boundTouchMove);
-    canvas.addEventListener('mouseup', onCanvasMouseUp.bind(null, boundMoveDraw, boundTouchMove));
+    canvas.addEventListener('mouseup', onCanvasMouseUp.bind(null, canvas, boundMoveDraw, boundTouchMove));
 
 }
 
-function onCanvasMouseUp(boundMoveDraw, boundTouchMove, ev) {
+function onCanvasMouseUp(canvas, boundMoveDraw, boundTouchMove, ev) {
     ev.preventDefault();
 
     canvas.removeEventListener('mousemove', boundMoveDraw);
@@ -127,10 +129,10 @@ function onCanvasTouchMove(canvas, pixelSize, colorCharacteristic, ev) {
 function moveDraw(canvas, pixelSize, colorCharacteristic, ev) {
     const position = getCanvasCoords(canvas, ev.pageX, ev.pageY);
 
-    const pixelData = ctx.getImageData(position.x, position.y, 1, 1).data;
+    const pixelData = canvas.getContext('2d').getImageData(position.x, position.y, 1, 1).data;
 
     if (color !== getHexCode(pixelData)) {
-        drawPixel(pixelSize, colorCharacteristic, position.x, position.y, color);
+        drawPixel(canvas, pixelSize, colorCharacteristic, position.x, position.y, color);
     }
 }
 
