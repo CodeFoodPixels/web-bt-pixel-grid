@@ -2,9 +2,10 @@
 
 const bleno = require(`bleno`);
 const LED = require(`rpi-ws281x-native`);
+const config = require('./config.json');
 
 class colorCharacteristic extends bleno.Characteristic {
-    constructor(pixels) {
+    constructor() {
         super({
             uuid: 'fadaf690-1f0d-11e8-a594-e1d1160981b7',
             properties: ['writeWithoutResponse'],
@@ -16,13 +17,13 @@ class colorCharacteristic extends bleno.Characteristic {
             ],
         });
 
-        this.pixelWidth = pixels.width;
+        this.pixelWidth = config.width;
 
-        const numPixels = pixels.width * pixels.height;
+        const numPixels = config.width * config.height;
 
         this.pixelData = new Uint32Array(numPixels);
 
-        LED.init(numPixels);
+        LED.init(numPixels, {brightness: Math.floor((255 / 100) * config.brightness)});
 
         LED.render(this.pixelData);
 
