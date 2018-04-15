@@ -1,4 +1,5 @@
 html, body {
+    height: 100%;
     padding: 0;
     margin: 0;
     background: black;
@@ -16,78 +17,72 @@ html, body {
     display: none;
 }
 
-#controls {
+#editor {
     display: none;
-}
-
-#controls.connected {
-    display: flex;
+    margin: 0;
     flex-direction: column;
+    width: 100%;
+    height: 100%;
 }
 
-#tools {
-    padding: 5px;
-    text-align: center;
+#editor.connected {
+    display: flex;
 }
 
 .btn-color {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     border: 2px solid white;
     font-size: 0px;
     vertical-align: top;
     padding: 0;
-    margin: 2px;
+    margin: 0px;
+    margin-left: -2px;
+    margin-top: -2px;
 }
 
-.btn-color.red {
-    background: red;
+#tools {
+  flex: 0 0 170px;
+  display: flex;
+  flex-direction: row;
+  padding: 5px;
+  align-items: center;
+  background: #222222;
+  border-bottom: 2px solid white;
+  overflow: auto;
 }
 
-.btn-color.green {
-    background: green;
-}
-
-.btn-color.blue {
-    background: blue;
-}
-
-.btn-color.white {
-    background: white;
-}
-
-.btn-color.black {
-    background: black;
-}
-
-.btn-color.yellow {
-    background: yellow;
-}
-
-.btn-color.cyan {
-    background: cyan;
-}
-
-.btn-color.magenta {
-    background: magenta;
+#palette {
+  flex: 1;
+  margin-left: 2px;
 }
 
 #color {
-    width: 36px;
-    height: 36px;
-    border: 2px solid white;
-    font-size: 0px;
-    vertical-align: top;
-    margin: 2px;
-    padding: 0px;
+  width: 50px;
+  height: 50px;
+  flex: 0 0 50px;
+  margin-left: 10px;
 }
 
-canvas {
-    border: 2px solid white;
+#canvasContainer {
+  flex: 1;
+  font-size: 0;
 }
 
 @media (min-aspect-ratio: 1/1) {
-    #controls.connected {
+    #editor {
         flex-direction: row;
+    }
+    
+    #tools {
+        flex: 0 0 120px;
+        flex-direction: column;
+        border-bottom: none;
+        border-right: 2px solid white;
+    }
+  
+    #color {
+      margin-left: 0px;
+      margin-top: 10px;
     }
 }

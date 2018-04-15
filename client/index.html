@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Hello!</title>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
-        <button id="connect">Connect</button>
-        <div id="controls">
-            <div id="tools">
-                <button class="btn-color red" data-color="#ff0000">red</button>
-                <button class="btn-color green" data-color="#00ff00">green</button>
-                <button class="btn-color blue" data-color="#0000ff">blue</button>
-                <button class="btn-color white" data-color="#ffffff">white</button>
-                <button class="btn-color black" data-color="#000000">black</button>
-                <button class="btn-color yellow" data-color="#ffff00">yellow</button>
-                <button class="btn-color cyan" data-color="#00ffff">cyan</button>
-                <button class="btn-color magenta" data-color="#ff00ff">magenta</button>
-                <input type="color" value="#ffffff" id="color" />
-            </div>
-        </div>
-        <script src="script.js" defer></script>
-    </body>
+  <head>
+    <title>Pixel Grid Editor</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=false">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <button id="connect">Connect</button>
+    <div id="editor">
+      <div id="tools">
+        <div id="palette"></div>
+        <input type="color" value="#ffffff" id="color" />
+      </div>
+      <div id="canvasContainer">
+      </div>
+    </div>
+    <script src="./palette.js" defer></script>
+    <script src="./editor.js" defer></script>
+    <script src="./bluetooth.js" defer></script>
+  </body>
 </html>

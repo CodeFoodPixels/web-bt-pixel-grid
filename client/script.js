@@ -1,8 +1,64 @@
-const serviceUuid = '9d407ea0-1f04-11e8-882c-e798277bf91c';
-const colorCharacteristicUuid = 'fadaf690-1f0d-11e8-a594-e1d1160981b7';
-const dimensionsCharacteristicUuid = '7d973ea0-1f0d-11e8-a96e-ed9798f4df2c';
+
 
 let color = '#ffffff';
+
+const pallette = [
+    '#000000',
+    '#797979',
+    '#a2a2a2',
+    '#305182',
+    '#4192c3',
+    '#61d3e3',
+    '#a2fff3',
+    '#306141',
+    '#49a269',
+    '#71e392',
+    '#a2ffcb',
+    '#386d00',
+    '#49aa10',
+    '#71f341',
+    '#a2f3a2',
+    '#386900',
+    '#51a200',
+    '#9aeb00',
+    '#cbf382',
+    '#495900',
+    '#8a8a00',
+    '#ebd320',
+    '#fff392',
+    '#794100',
+    '#c37100',
+    '#ffa200',
+    '#ffdba2',
+    '#a23000',
+    '#e35100',
+    '#ff7930',
+    '#ffcbba',
+    '#b21030',
+    '#db4161',
+    '#ff61b2',
+    '#ffbaeb',
+    '#9a2079',
+    '#db41c3',
+    '#f361ff',
+    '#e3b2ff',
+    '#6110a2',
+    '#9241f3',
+    '#a271ff',
+    '#c3b2ff',
+    '#2800ba',
+    '#4141ff',
+    '#5182ff',
+    '#a2baff',
+    '#2000b2',
+    '#4161fb',
+    '#61a2ff',
+    '#92d3ff',
+    '#797979',
+    '#b2b2b2',
+    '#ebebeb',
+    '#ffffff'
+];
 
 async function connect() {
     const service = await navigator.bluetooth.requestDevice({
@@ -26,10 +82,25 @@ async function connect() {
 
     const colorCharacteristic = await service.getCharacteristic(colorCharacteristicUuid);
 
+    buildPallette();
     setupCanvas(dimensions, colorCharacteristic);
 
     document.querySelector('#connect').classList.add('connected');
     document.querySelector('#controls').classList.add('connected');
+}
+
+function buildPallette() {
+    const palletteEl = document.querySelector('#pallette');
+  
+    pallette.forEach((color) => {
+        const button = document.createElement('button');
+        button.classList.add('btn-color');
+        button.setAttribute('data-color', color);
+        button.style.backgroundColor = color;
+        
+        palletteEl.appendChild(button);
+        button.addEventListener('click', setColorValue);
+    });
 }
 
 function setupCanvas(dimensions, colorCharacteristic) {
@@ -150,8 +221,4 @@ if (!navigator.bluetooth) {
     document.querySelector('#connect').addEventListener('click', connect);
 
     document.querySelector('#color').addEventListener('change', updateColor);
-
-    document.querySelectorAll('.btn-color').forEach((el) => {
-        el.addEventListener('click', setColorValue);
-    });
 }
