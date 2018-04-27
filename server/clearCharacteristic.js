@@ -1,15 +1,15 @@
 'use strict';
 
 const bleno = require(`bleno`);
-class colorCharacteristic extends bleno.Characteristic {
+class clearCharacteristic extends bleno.Characteristic {
     constructor(pixelGrid) {
         super({
-            uuid: 'fadaf690-1f0d-11e8-a594-e1d1160981b7',
+            uuid: '49b98934-a3b4-4d1c-8cc5-06524a61a742',
             properties: ['writeWithoutResponse'],
             descriptors: [
                 new bleno.Descriptor({
                     uuid: '2901',
-                    value: 'Sets the color of a pixel'
+                    value: 'Clears the pixel display'
                 })
             ],
         });
@@ -18,13 +18,10 @@ class colorCharacteristic extends bleno.Characteristic {
     }
 
     onWriteRequest(data, offset, withoutResponse, callback) {
-        let [ x, y, color ] = data.toString().split(',');
-
-        x = parseInt(x, 10);
-        y = parseInt(y, 10);
-
-        this.pixelGrid.fillPixel(x, y, color)
+        if (data.toString() === 'clear'){
+            this.pixelGrid.clear();
+        }
     }
 }
 
-module.exports = colorCharacteristic;
+module.exports = clearCharacteristic;

@@ -1,4 +1,4 @@
-function setupEditor(width, height, drawCallback) {
+function setupEditor(width, height, drawCallback, clearCallback) {
   const state = {
     dimensions: {
       width: 0,
@@ -11,7 +11,7 @@ function setupEditor(width, height, drawCallback) {
     ctx: undefined,
     color: '#ffffff',
     position: {
-      x: 0, 
+      x: 0,
       y: 0
     },
     gridStart: {
@@ -19,36 +19,36 @@ function setupEditor(width, height, drawCallback) {
       y: 0
     }
   };
-  
+
   function getDefaultPixelSize() {
     const canvasContainer = document.querySelector('#canvasContainer');
     const widthPixel = Math.floor(canvasContainer.offsetWidth / width);
     const heightPixel = Math.floor(canvasContainer.offsetHeight / height);
-    
+
     return (widthPixel < heightPixel ? widthPixel : heightPixel) * 0.9;
   }
-  
+
   function setupGridData() {
     const gridData = [];
-    
+
     for (let x = 0; x < width; x++) {
       gridData[x] = [];
       for (let y = 0; y < height; y++) {
         gridData[x][y] = '#000000';
       }
     }
-    
+
     return gridData;
   }
-  
+
   function setupCanvas() {
     const canvasContainer = document.querySelector('#canvasContainer');
-  
+
     state.dimensions.width = canvasContainer.offsetWidth;
     state.dimensions.height = canvasContainer.offsetHeight;
-    
+
     const canvas = document.createElement('canvas');
-    
+
     canvas.setAttribute('id', 'pixelCanvas');
     canvas.setAttribute('width', canvasContainer.offsetWidth);
     canvas.setAttribute('height', canvasContainer.offsetHeight);
@@ -56,24 +56,24 @@ function setupEditor(width, height, drawCallback) {
     canvasContainer.appendChild(canvas);
 
     state.ctx = canvas.getContext('2d');
-    
+
     repositionCanvas();
   }
-  
+
   function setupPalette() {
     const paletteEl = document.querySelector('#palette');
-  
+
     palette.forEach((color) => {
         const button = document.createElement('button');
         button.classList.add('btn-color');
         button.setAttribute('data-color', color);
         button.style.backgroundColor = color;
-        
+
         paletteEl.appendChild(button);
         button.addEventListener('click', setColorValue);
     });
 }
-  
+
   function repositionCanvas() {
     state.ctx.translate((state.dimensions.width / 2), (state.dimensions.height / 2));
     state.ctx.scale(state.pixelSize, state.pixelSize);
@@ -87,29 +87,29 @@ function setupEditor(width, height, drawCallback) {
 
     redraw();
   }
-  
+
   function isDrawable(x, y) {
     if (x < state.gridStart.x) return false;
     if (x >= state.gridStart.x + width) return false;
     if (y < state.gridStart.y) return false;
     if (y >= state.gridStart.y + height) return false;
-    
+
     return true;
   }
-  
+
   function redraw() {
     state.ctx.clearRect(0, 0, state.dimensions.width , state.dimensions.height);
-    
+
     state.ctx.fillStyle = '#333333';
     state.ctx.fillRect(0, 0, state.dimensions.width , state.dimensions.height);
-    
-    
+
+
     state.ctx.fillStyle = '#ffffff';
-    
+
     const borderSize = Math.max(2 / state.pixelSize, 0.1)
-    
+
     state.ctx.fillRect(state.gridStart.x - borderSize, state.gridStart.y - borderSize, width + (borderSize * 2), height + (borderSize * 2));
-    
+
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
         state.ctx.fillStyle = state.gridData[x][y];
@@ -117,15 +117,15 @@ function setupEditor(width, height, drawCallback) {
       }
     }
   }
- 
-  function drawPixel(x, y, color) {    
+
+  function drawPixel(x, y, color) {
     ({x, y} = getScaledCoords(x, y));
-    
+
     const xReference = Math.floor(x - state.gridStart.x);
     const yReference = Math.floor(y - state.gridStart.y);
     const xPixel = xReference + state.gridStart.x;
     const yPixel = yReference + state.gridStart.y;
-    
+
     if (isDrawable(xPixel, yPixel)) {
       state.ctx.fillStyle = color;
       state.ctx.fillRect(xPixel - 0.01, yPixel - 0.01, 1.02, 1.02);
@@ -133,7 +133,7 @@ function setupEditor(width, height, drawCallback) {
       drawCallback(xReference, yReference, color);
     }
   }
-  
+
   function getScaledCoords(x, y) {
       return {
         x: state.position.x + (x / state.pixelSize),
@@ -143,7 +143,7 @@ function setupEditor(width, height, drawCallback) {
 
   function getCanvasCoords(x, y) {
     const canvas = document.querySelector('#pixelCanvas');
-    
+
     return {
      x: x - canvas.offsetLeft,
      y: y - canvas.offsetTop
@@ -162,21 +162,21 @@ function setupEditor(width, height, drawCallback) {
 
       output += part;
     }
-    
+
     return output;
   }
 
   function onMouseDown(e) {
     const position = getCanvasCoords(e.pageX, e.pageY);
     const canvas = document.querySelector('#pixelCanvas');
-    
+
     drawPixel(position.x, position.y, state.color);
     canvas.addEventListener('mousemove', moveDraw);
   }
 
   function onMouseUp(e) {
     const canvas = document.querySelector('#pixelCanvas');
-    
+
     canvas.removeEventListener('mousemove', moveDraw);
   }
 
@@ -185,12 +185,12 @@ function setupEditor(width, height, drawCallback) {
     if (e.touches.length === 1) {
       return moveDraw(e.touches[0]);
     }
-    
+
     if (state.zooming) {
-      pinchZoom(e);      
+      pinchZoom(e);
     }
   }
-  
+
   const pinchZoom = throttle(function(e) {
     const distance = Math.hypot(
       e.touches[0].pageX - e.touches[1].pageX,
@@ -214,16 +214,16 @@ function setupEditor(width, height, drawCallback) {
       drawPixel(position.x, position.y, state.color);
     }
   }
-  
+
   function zoom(steps, x, y) {
       ({x, y} = getCanvasCoords(x, y));
-      
+
       const factor = Math.pow(1.1, steps);
-      
+
       if (state.pixelSize * factor < 1) {
         return;
       }
-    
+
       state.ctx.translate(state.position.x, state.position.y);
 
       state.position.x = ( x / state.pixelSize + state.position.x - x / ( state.pixelSize * factor ) );
@@ -234,58 +234,58 @@ function setupEditor(width, height, drawCallback) {
       state.ctx.translate(state.position.x * -1, state.position.y * -1);
 
       state.pixelSize *= factor;
-    
+
       requestAnimationFrame(redraw);
   }
-  
+
   function onScroll(e) {
-      e.preventDefault() 
+      e.preventDefault()
       zoom(e.deltaY / 40, e.clientX, e.clientY);
   }
-  
+
   function onResize(e) {
       const canvas = document.querySelector('#pixelCanvas');
       const canvasContainer = document.querySelector('#canvasContainer');
-    
+
       canvas.setAttribute('width', 0);
       canvas.setAttribute('height', 0);
-    
+
       state.dimensions.height = canvasContainer.offsetHeight;
       state.dimensions.width = canvasContainer.offsetWidth;
-      
+
       canvas.setAttribute('width', state.dimensions.width);
       canvas.setAttribute('height', state.dimensions.height);
-    
+
       state.pixelSize = getDefaultPixelSize();
-    
+
       repositionCanvas();
   }
 
   function debounce(func, wait) {
       let timeout;
-      
+
       return function() {
           const args = arguments;
-          
+
           const later = function() {
               timeout = null;
               func.apply(this, args);
           }.bind(this);
-          
+
           clearTimeout(timeout);
-        
+
           timeout = setTimeout(later, wait);
       };
   }
-  
+
   function throttle(fn, threshhold) {
     let last;
     let deferTimer;
-    
+
     return function () {
       let now = +new Date;
       let args = arguments;
-      
+
       if (last && now < last + threshhold) {
         clearTimeout(deferTimer);
         deferTimer = setTimeout(function () {
@@ -298,10 +298,10 @@ function setupEditor(width, height, drawCallback) {
       }
     };
   }
-  
+
   function setupCanvasListeners() {
     const canvas = document.querySelector('#pixelCanvas');
-    
+
     canvas.addEventListener('mousedown', onMouseDown);
     canvas.addEventListener('mouseup', onMouseUp);
 
@@ -331,21 +331,27 @@ function setupEditor(width, height, drawCallback) {
 
     canvas.addEventListener('wheel', throttle(onScroll, 100));
   }
-  
+
   function setColorValue() {
     document.querySelector('#color').value = this.getAttribute('data-color');
     state.color = this.getAttribute('data-color');
   }
-  
+
   setupCanvas();
-  
+
   setupCanvasListeners();
-  
-  setupPalette();  
-  
+
+  setupPalette();
+
   document.querySelector('#color').addEventListener('change', (e) => {
     state.color = e.target.value;
-  })
-  
+  });
+
+  document.querySelector('#clear').addEventListener('click', (e) => {
+    state.gridData = setupGridData();
+    redraw();
+    clearCallback();
+  });
+
   window.addEventListener('resize', debounce(onResize, 100));
 }

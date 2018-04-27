@@ -1,5 +1,6 @@
 const serviceUuid = '9d407ea0-1f04-11e8-882c-e798277bf91c';
 const colorCharacteristicUuid = 'fadaf690-1f0d-11e8-a594-e1d1160981b7';
+const clearCharacteristicUuid = '49b98934-a3b4-4d1c-8cc5-06524a61a742';
 const dimensionsCharacteristicUuid = '7d973ea0-1f0d-11e8-a96e-ed9798f4df2c';
 
 async function connect() {
@@ -23,19 +24,26 @@ async function connect() {
         });
 
     const colorCharacteristic = await service.getCharacteristic(colorCharacteristicUuid);
+    const clearCharacteristic = await service.getCharacteristic(clearCharacteristicUuid);
     const encoder = new TextEncoder('utf-8');
-    
+
     document.querySelector('#connect').classList.add('connected');
     document.querySelector('#editor').classList.add('connected');
-  
-    setupEditor(width, height, (x, y, color) => {
-      const command = x + ',' + y + ',' + color.replace('#', '');
 
-      colorCharacteristic.writeValue(encoder.encode(command))
-        .catch(error => {
-            console.log(error);
-        });
-    });
+    setupEditor(width, height, writePixel, clear);
+
+    function clear() {
+        clearCharacteristic.writeValue(encoder.encode('clear'));
+    }
+
+    function writePixel(x, y, color) {
+        const command = x + ',' + y + ',' + color.replace('#', '');
+
+        colorCharacteristic.writeValue(encoder.encode(command))
+            .catch(error => {
+                console.log(error);
+            });
+    }
 }
 
 

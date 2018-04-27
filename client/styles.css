@@ -57,12 +57,13 @@ html, body {
   margin-left: 2px;
 }
 
-#color {
+#color, #clear {
   width: 50px;
   height: 50px;
   flex: 0 0 50px;
   margin-left: 10px;
 }
+
 
 #canvasContainer {
   flex: 1;
@@ -73,15 +74,15 @@ html, body {
     #editor {
         flex-direction: row;
     }
-    
+
     #tools {
         flex: 0 0 120px;
         flex-direction: column;
         border-bottom: none;
         border-right: 2px solid white;
     }
-  
-    #color {
+
+    #color, #clear {
       margin-left: 0px;
       margin-top: 10px;
     }
