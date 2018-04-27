@@ -2,6 +2,7 @@
 
 const bleno = require(`bleno`);
 const colorCharacteristic = require(`./colorCharacteristic.js`);
+const clearCharacteristic = require(`./clearCharacteristic.js`);
 const dimensionsCharacteristic = require(`./dimensionsCharacteristic.js`);
 const PixelGrid = require(`./pixelGrid.js`);
 const config = require('./config.json');
