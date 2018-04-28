@@ -41,7 +41,11 @@ class pixelGrid {
     }
 
     clear() {
-        LED.reset();
+        this.pixelData = this.pixelData.map(() => {
+            return 0;
+        });
+
+        LED.render(this.pixelData);
     }
 }
 
