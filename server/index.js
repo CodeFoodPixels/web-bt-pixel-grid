@@ -4,10 +4,10 @@ const bleno = require(`bleno`);
 const colorCharacteristic = require(`./colorCharacteristic.js`);
 const clearCharacteristic = require(`./clearCharacteristic.js`);
 const dimensionsCharacteristic = require(`./dimensionsCharacteristic.js`);
-const PixelGrid = require(`./pixelGrid.js`);
+const PixelGrid = require(`rpi-ws281x-grid`);
 const config = require('./config.json');
 
-const pixelGrid = new PixelGrid(config.width, config.height, config.brightness);
+const pixelGrid = PixelGrid(config);
 
 bleno.on(`stateChange`, (state) => {
     if (state === `poweredOn`) {
