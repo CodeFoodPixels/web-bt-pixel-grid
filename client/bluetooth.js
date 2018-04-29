@@ -36,14 +36,24 @@ async function connect() {
         clearCharacteristic.writeValue(encoder.encode('clear'));
     }
 
+    const writeQueue = [];
+
     function writePixel(x, y, color) {
         const command = x + ',' + y + ',' + color.replace('#', '');
 
-        colorCharacteristic.writeValue(encoder.encode(command))
-            .catch(error => {
-                console.log(error);
-            });
+        writeQueue.push(command);
     }
+
+    setInterval(() => {
+        if (writeQueue.length > 0) {
+            const command = writeQueue.shift();
+
+            await colorCharacteristic.writeValue(encoder.encode(command))
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+    }, 1);
 }
 
 
