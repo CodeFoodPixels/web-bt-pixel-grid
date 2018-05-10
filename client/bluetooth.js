@@ -44,7 +44,7 @@ async function connect() {
         writeQueue.push(command);
     }
 
-    setInterval(() => {
+    setInterval(async () => {
         if (writeQueue.length > 0) {
             const command = writeQueue.shift();
 
