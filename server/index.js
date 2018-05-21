@@ -21,6 +21,8 @@ bleno.on(`advertisingStart`, (error) => {
     console.log('on -> advertisingStart: ' + (error ? 'error ' + error : 'success'));
 
     if (!error) {
+        pixelGrid.fillPixel(0, 0, '00ff00');
+
         bleno.setServices([
             new bleno.PrimaryService({
                 uuid: '9d407ea0-1f04-11e8-882c-e798277bf91c',
@@ -32,4 +34,8 @@ bleno.on(`advertisingStart`, (error) => {
             })
         ]);
     }
+});
+
+bleno.on(`accept`, () => {
+    pixelGrid.clear();
 });
