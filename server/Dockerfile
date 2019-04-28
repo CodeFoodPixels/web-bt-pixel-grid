@@ -1,13 +1,14 @@
-FROM node:9
+FROM node:8-alpine
 
-RUN apt-get update
-RUN apt-get install -y bluetooth bluez libbluetooth-dev libudev-dev
+RUN apk add --update bluez bluez-libs linux-headers
 
 WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm install
+RUN apk add --no-cache --virtual .build-deps alpine-sdk python \
+ && npm install --production \
+ && apk del .build-deps
 
 COPY . .
 
