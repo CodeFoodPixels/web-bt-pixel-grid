@@ -32,6 +32,8 @@ async function connect() {
 
     setupEditor(width, height, writePixel, clear);
 
+    window.writePixel = writePixel;
+
     function clear() {
         clearCharacteristic.writeValue(encoder.encode('clear'));
     }
@@ -44,16 +46,21 @@ async function connect() {
         writeQueue.push(command);
     }
 
+    let canWrite = true;
     setInterval(async () => {
-        if (writeQueue.length > 0) {
+        if (writeQueue.length > 0 && canWrite) {
+            canWrite = false;
+
             const command = writeQueue.shift();
 
             await colorCharacteristic.writeValue(encoder.encode(command))
-                .catch(error => {
+                .then(() => {
+                    canWrite = true;
+                }).catch(error => {
                     console.log(error);
                 });
         }
-        
+
     }, 1);
 }
 
