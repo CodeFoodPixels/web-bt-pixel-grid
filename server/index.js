@@ -7,7 +7,10 @@ const dimensionsCharacteristic = require(`./dimensionsCharacteristic.js`);
 const PixelGrid = require(`rpi-ws281x-grid`);
 const config = require('./config.json');
 
-const pixelGrid = PixelGrid(config);
+const pixelGrid = PixelGrid({
+    ...config,
+    throttle: 100
+});
 
 bleno.on(`stateChange`, (state) => {
     if (state === `poweredOn`) {
